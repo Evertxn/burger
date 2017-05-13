@@ -8,7 +8,7 @@ var PORT = process.env.PORT || 8000;
 
 app.use(bodyParser.urlencoded({
     extended: false
-}))
+}));
 
 // override with POST having ?_method=DELETE
 app.use(methodOverride('_method'))
@@ -22,9 +22,6 @@ app.set('view engine', 'handlebars');
 //routes
 var routes = require('./controllers/burgers_controller.js');
 app.use('/', routes);
-app.use('/create', routes);
-app.use('/update', routes);
-app.use('/delete', routes);
 
 app.listen(PORT, function() {
     console.log("Listening on %s", PORT);

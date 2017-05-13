@@ -1,35 +1,49 @@
 /**
  * Created by Ev on 5/6/17.
  */
-var connection = require("../config/connection.js");
+var connection = require('../config/connection.js');
 
-connection.connect(function(err) {
-    if(err) {
-        console.log("Error", err.stack);
+function printQuestionMarks(num){
+    var arr = [];
+
+    for (var i=0; i<num; i++){
+        arr.push('?')
     }
-    console.log("Connected as id: %s", connection.threadId)
-});
+
+    return arr.toString();
+}
+
+function objToSql(ob){
+
+    var arr = [];
+
+    for (var key in ob) {
+        arr.push(key + '=' + ob[key]);
+    }
+
+    return arr.toString();
+}
 
 var orm = {
-    addBurger: function(burger, cb) {
-        var burgerName = burger;
-        var mySQLQuery = "INSERT INTO burgers (burger_name) VALUES ('" + burgerName + "')";
-        connection.query(mySQLQuery, function(err, result) {
-            if (err) throw err;
+    all: function(tableInput, cb) {
+        var queryString = 'SELECT * FROM ' + tableInput + ';';
+        connection.query(queryString, function(err, result) {
             cb(result);
         });
     },
-    eatBurger: function(burgerId, cb) {
-        var id = burgerId;
-        connection.query("UPDATE burgers SET devoured=1 WHERE id=?", [id], function(err, result) {
-            if (err) throw err;
-            cb(result);
-        });
-    },
-    showBurgers: function(tableName, cb) {
-        connection.query('SELECT * FROM burgers', function(err, result) {
-            if (err) throw err;
 
+    create: function(table, cols, vals, cb) {
+        var queryString = 'INSERT INTO ' + table + ' (' + cols.toString() +') ' + 'VALUES (' + printQuestionMarks(vals.length) + ') ';
+
+        connection.query(queryString, vals, function(err, result){
+            cb(result);
+        });
+    },
+
+    update: function(table, objColVals, condition, cb) {
+        var queryString = 'UPDATE ' + table + ' SET ' + objToSql(objColVals) + ' WHERE ' + condition;
+
+        connection.query(queryString, function(err, result){
             cb(result);
         });
     }

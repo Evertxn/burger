@@ -1,25 +1,31 @@
 var express = require('express');
 var router = express.Router();
-var queries = require('../models/burger.js');
+var burger = require('../models/burger.js');
 
-router.get('/', function (req, res) {
-    queries.show(function(data){
-        var data1 = {
-            burgerData: data
-        };
-        res.render('index', data1);
+router.get('/', function(req,res) {
+    res.redirect('/burgers')
+});
+
+router.get('/burgers', function(req,res) {
+    burger.all(function(data){
+        var burger1 = {burgers : data}
+        res.render('index', burger1);
     });
 });
 
-router.post('/create', function (req, res) {
-    queries.add(req.body.item, function() {
-        res.redirect('/');
+router.post('/burgers/create', function(req,res) {
+    burger.create(['burger_name', 'devoured'], [req.body.burger_name, req.body.devoured], function(data){
+        res.redirect('/burgers')
     });
 });
 
-router.post('/update', function(req, res){
-    queries.eat(req.body.id, function(){
-        res.redirect('/');
+router.put('/burgers/update/:id', function(req,res) {
+    var condition = 'id = ' + req.params.id;
+
+    console.log('condition', condition);
+
+    burger.update({'devoured' : req.body.devoured}, condition, function(data){
+        res.redirect('/burgers');
     });
 });
 
