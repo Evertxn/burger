@@ -8,7 +8,7 @@ router.get('/', function(req,res) {
 
 router.get('/burgers', function(req,res) {
     burger.all(function(data){
-        var burger1 = {burgers : data}
+        var burger1 = {burgers : data};
         res.render('index', burger1);
     });
 });
